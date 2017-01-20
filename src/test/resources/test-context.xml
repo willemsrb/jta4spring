@@ -9,9 +9,11 @@
     <context:annotation-config/>
 
 	<!-- Monitor -->
-	<bean name="jtaMonitor" class="nl.futureedge.jta4spring.JtaMonitor" />
+	<bean name="jtaMonitor" class="nl.futureedge.jta4spring.JtaMonitor">
+		<property name="uniqueName" value="test" />
+	</bean>
 	<bean name="jtaTransactionManager" class="nl.futureedge.jta4spring.JtaTransactionManager">
-		<constructor-arg ref="jtaMonitor"/>
+		<property name="jtaMonitor" ref="jtaMonitor"/>
 	</bean>
 	
 	<!-- DataSource -->
@@ -52,6 +54,5 @@
 	<bean name="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>	
-    
 </beans>
 

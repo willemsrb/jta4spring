@@ -3,20 +3,20 @@ package nl.futureedge.jta4spring.it;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.env.PropertiesPropertySource;
 
 
 public abstract class AbstractIT {
 
-	private static final Logger LOGGER = Logger.getLogger(AbstractIT.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractIT.class);
 
 	private static Properties portProperties = new Properties();
 	private static GenericXmlApplicationContext databaseContext;
@@ -29,11 +29,11 @@ public abstract class AbstractIT {
 	@BeforeClass
 	public static void startDependencies() throws IOException {
 		try (ServerSocket databasePort = new ServerSocket(0)) {
-			LOGGER.log(Level.INFO, "Configuring database to port: " + databasePort.getLocalPort());
+			LOGGER.info("Configuring database to port: {}", databasePort.getLocalPort());
 			portProperties.setProperty("test.database.port", Integer.toString(databasePort.getLocalPort()));
 		}
 		try (ServerSocket brokerPort = new ServerSocket(0)) {
-			LOGGER.log(Level.INFO, "Configuring broker to port: " + brokerPort.getLocalPort());
+			LOGGER.info("Configuring broker to port: {}", brokerPort.getLocalPort());
 			portProperties.setProperty("test.broker.port", Integer.toString(brokerPort.getLocalPort()));
 		}
 
@@ -56,14 +56,14 @@ public abstract class AbstractIT {
 			try {
 				messagebrokerContext.close();
 			} catch (final Exception e) {
-				LOGGER.log(Level.WARNING, "Problem closing BROKER context", e);
+				LOGGER.warn("Problem closing BROKER context", e);
 			}
 		}
 		if (databaseContext != null) {
 			try {
 				databaseContext.close();
 			} catch (final Exception e) {
-				LOGGER.log(Level.WARNING, "Problem closing DATABASE context", e);
+				LOGGER.warn("Problem closing DATABASE context", e);
 			}
 		}
 	}
@@ -85,7 +85,7 @@ public abstract class AbstractIT {
 			try {
 				testContext.close();
 			} catch (final Exception e) {
-				LOGGER.log(Level.WARNING, "Problem closing TEST context", e);
+				LOGGER.warn("Problem closing TEST context", e);
 			}
 		}
 	}

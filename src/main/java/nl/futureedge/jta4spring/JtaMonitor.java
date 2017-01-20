@@ -1,18 +1,32 @@
 package nl.futureedge.jta4spring;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 
 public class JtaMonitor implements InitializingBean, DisposableBean, Synchronization {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(JtaMonitor.class);
 
+	private final AtomicLong TRANSACTION_ID = new AtomicLong(1);
 	private final ThreadLocal<JtaTransaction> transaction = new ThreadLocal<>();
+
+	private String uniqueName;
+
+	@Required
+	public void setUniqueName(final String uniqueName) {
+		this.uniqueName = uniqueName;
+	}
 
 	/**
 	 * Startup; read transaction store; rollback everything found.
@@ -46,7 +60,8 @@ public class JtaMonitor implements InitializingBean, DisposableBean, Synchroniza
 		if(transaction.get() != null) {
 			throw new NotSupportedException("Transaction already started");
 		}
-		final JtaTransaction result = new JtaTransaction();
+
+		final JtaTransaction result = new JtaTransaction(new JtaXid(uniqueName, TRANSACTION_ID.getAndIncrement()));
 		try {
 			result.registerSynchronization(this);
 		} catch (IllegalStateException | RollbackException e) {
@@ -88,7 +103,7 @@ public class JtaMonitor implements InitializingBean, DisposableBean, Synchroniza
 	 *    encounters an unexpected error condition.
 	 *
 	 */
-	public int getStatus() throws SystemException {
+	public int getStatus() {
 		final JtaTransaction result = transaction.get();
 		if(result == null) {
 			return Status.STATUS_NO_TRANSACTION;

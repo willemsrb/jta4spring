@@ -15,9 +15,9 @@
     			brokerName="testBroker"
 
     			advisorySupport="false"
-                useJmx="true"
+                useJmx="false"
                 useShutdownHook="false"
-                enableStatistics="true"
+                enableStatistics="false"
                 dedicatedTaskRunner="false"
 
     			persistent="true"
