@@ -2,19 +2,30 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jta4spring="http://www.future-edge.nl/schema/jta4spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.future-edge.nl/schema/jta4spring http://www.future-edge.nl/schema/jta4spring/jta4spring.xsd">
 
     <context:property-placeholder />
     <context:annotation-config/>
 
-	<!-- Monitor -->
+	<!-- TransactionManager -->
+	<jta4spring:transaction-manager id="transactionManager" unique-name="test" />
+	
+	<!-- 
 	<bean name="jtaMonitor" class="nl.futureedge.jta4spring.JtaMonitor">
 		<property name="uniqueName" value="test" />
 	</bean>
 	<bean name="jtaTransactionManager" class="nl.futureedge.jta4spring.JtaTransactionManager">
 		<property name="jtaMonitor" ref="jtaMonitor"/>
 	</bean>
+	
+    <bean name="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="transactionManager" ref="jtaTransactionManager"/>
+    </bean>
+     -->
+
 	
 	<!-- DataSource -->
 	<bean name="xaDataSource" class="org.hsqldb.jdbc.pool.JDBCXADataSource">
@@ -23,36 +34,41 @@
         <property name="password" value=""/>
 	</bean>
 	
+	<jta4spring:data-source id="dataSource" xa-data-source="xaDataSource" />
+	
+	<!-- 
 	<bean name="dataSource" class="nl.futureedge.jta4spring.jdbc.XADataSourceWrapper">
 		<property name="xaDataSource" ref="xaDataSource" />
 		<property name="transactionManager" ref="jtaTransactionManager" />
 	</bean>
-	
-	<bean name="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	-->
 	
 	<!-- ConnectionFactory -->
 	<bean name="xaConnectionFactory" class="org.apache.activemq.ActiveMQXAConnectionFactory">
 		<property name="brokerURL" value="tcp://localhost:${test.broker.port}" />
 	</bean>
 	
+	<jta4spring:connection-factory id="connectionFactory" xa-connection-factory="xaConnectionFactory" />
+	
+	<!-- 
 	<bean name="connectionFactory" class="nl.futureedge.jta4spring.jms.XAConnectionFactoryWrapper">
 		<property name="xaConnectionFactory" ref="xaConnectionFactory" />
 		<property name="transactionManager" ref="jtaTransactionManager" />	
 	</bean>
+	-->
 	
-	<bean name="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory" ref="connectionFactory" />
-	</bean>	
-	
-    <!-- TransactionManager -->
-    <bean name="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
-        <property name="transactionManager" ref="jtaTransactionManager"/>
-    </bean>
+    <!-- Templates -->
 
 	<bean name="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager" ref="transactionManager" />
+	</bean>	
+	    
+	<bean name="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean name="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
 	</bean>	
 </beans>
 

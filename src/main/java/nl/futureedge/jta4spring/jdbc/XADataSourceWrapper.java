@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 import nl.futureedge.jta4spring.JtaTransactionManager;
@@ -24,7 +25,9 @@ public class XADataSourceWrapper implements FactoryBean<DataSource>, Initializin
 		LOGGER.trace("setXaDataSource(xaDataSource={})", xaDataSource);
 		this.xaDataSource = xaDataSource;
 	}
+
 	@Required
+	@Autowired
 	public void setTransactionManager(final JtaTransactionManager transactionManager) {
 		LOGGER.trace("setTransactionManager(transactionManager={})", transactionManager);
 		this.transactionManager = transactionManager;

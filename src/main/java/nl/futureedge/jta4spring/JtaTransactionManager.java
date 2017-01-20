@@ -11,6 +11,7 @@ import javax.transaction.TransactionManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 public class JtaTransactionManager implements TransactionManager {
@@ -20,6 +21,7 @@ public class JtaTransactionManager implements TransactionManager {
 	private JtaMonitor jtaMonitor;
 
 	@Required
+	@Autowired
 	public void setJtaMonitor(final JtaMonitor jtaMonitor) {
 		this.jtaMonitor=jtaMonitor;
 	}

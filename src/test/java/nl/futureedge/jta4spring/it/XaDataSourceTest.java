@@ -10,6 +10,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +22,7 @@ public class XaDataSourceTest extends AbstractIT {
 	private XADataSource xaDataSource;
 
 	@Test
+	@Ignore
 	public void test() throws XAException, SQLException {
 		final Xid xid = new JtaXid("test2", 4);
 

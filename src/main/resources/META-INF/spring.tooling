@@ -1,0 +1,3 @@
+# Tooling related information for the jta4spring namespace
+http\://www.springframework.org/schema/beans@name=jta4spring Namespace
+http\://www.springframework.org/schema/beans@prefix=jta4spring
